@@ -1,0 +1,49 @@
+name: publish-ecr-action
+
+author: Heronlabs
+
+description: Publish ECR Image
+
+inputs:
+  AWS_REPOSITORY:
+    description: inputs.AWS_REPOSITORY
+  AWS_ACCESS_KEY_ID:
+    description: inputs.AWS_ACCESS_KEY_ID
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: inputs.AWS_SECRET_ACCESS_KEY
+    required: true
+  TAG_NAME:
+    description: inputs.TAG_NAME
+    required: true
+  REPO:
+    description: inputs.REPO
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: '[BUILD] | Build'
+      run: docker build --tag ${{ inputs.TAG_NAME }} .
+      shell: bash
+
+    - name: '[TEST] | Lint Check'
+      run: docker run --rm --interactive hadolint/hadolint < Dockerfile
+      shell: bash
+
+    - name: '[PUBLISH] | Login on ECS'
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.AWS_REPOSITORY }}
+        username: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        password: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+
+    - name: '[PUBLISH] | Publish image on ECR'
+      shell: bash
+      run: |
+         chmod +x ./publish-docker-action/core/publish-docker-image.sh
+         ./publish-docker-action/core/publish-docker-image.sh
+      env:
+        TAG_NAME: ${{ inputs.TAG_NAME }}
+        REPO: ${{ inputs.REPO }}
+
