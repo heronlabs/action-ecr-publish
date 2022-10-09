@@ -1,3 +1,3 @@
-docker tag $TAG_NAME $REPO:latest
+docker tag $TAG_NAME $AWS_REPOSITORY/$TAG_NAME
 
-docker push $REPO:latest
+docker push $AWS_REPOSITORY/$TAG_NAME

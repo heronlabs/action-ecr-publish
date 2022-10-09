@@ -17,9 +17,6 @@ inputs:
   TAG_NAME:
     description: inputs.TAG_NAME
     required: true
-  REPO:
-    description: inputs.REPO
-    required: true
 
 runs:
   using: composite
@@ -45,6 +42,6 @@ runs:
          chmod +x ./publish-docker-action/core/publish-docker-image.sh
          ./publish-docker-action/core/publish-docker-image.sh
       env:
+        REGISTRY: ${{ inputs.AWS_REPOSITORY }}
         TAG_NAME: ${{ inputs.TAG_NAME }}
-        REPO: ${{ inputs.REPO }}
 
