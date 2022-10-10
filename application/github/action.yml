@@ -39,8 +39,8 @@ runs:
     - name: '[PUBLISH] | Publish image on ECR'
       shell: bash
       run: |
-         chmod +x ./publish-docker-action/core/publish-docker-image.sh
-         ./publish-docker-action/core/publish-docker-image.sh
+         chmod +x ./publish-ecr-action/core/publish-docker-image.sh
+         ./publish-ecr-action/core/publish-docker-image.sh
       env:
         REGISTRY: ${{ inputs.AWS_REPOSITORY }}
         TAG_NAME: ${{ inputs.TAG_NAME }}
