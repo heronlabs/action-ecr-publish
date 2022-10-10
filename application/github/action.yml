@@ -45,7 +45,7 @@ runs:
          chmod +x ./publish-ecr-action/core/publish-docker-image.sh
          ./publish-ecr-action/core/publish-docker-image.sh
       env:
-        REGISTRY: ${{ inputs.AWS_REPOSITORY }}
+        AWS_REPOSITORY: ${{ inputs.AWS_REPOSITORY }}
         BUILD_NAME: ${{ inputs.BUILD_NAME }}
         TAG_NAME: ${{ inputs.TAG_NAME }}
 
