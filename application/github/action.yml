@@ -17,6 +17,9 @@ inputs:
   BUILD_NAME:
     description: inputs.BUILD_NAME
     required: true
+  FILE_NAME:
+    description: inputs.FILE_NAME
+    required: true
   TAG_NAME:
     description: inputs.TAG_NAME
     required: true
@@ -25,11 +28,11 @@ runs:
   using: composite
   steps:
     - name: '[BUILD] | Build'
-      run: docker build --tag ${{ inputs.BUILD_NAME }} .
+      run: docker build --tag ${{ inputs.BUILD_NAME }} . -f ${{ inputs.FILE_NAME }}
       shell: bash
 
     - name: '[TEST] | Lint Check'
-      run: docker run --rm --interactive hadolint/hadolint < Dockerfile
+      run: docker run --rm --interactive hadolint/hadolint < ${{ inputs.FILE_NAME }}
       shell: bash
 
     - name: '[PUBLISH] | Login on ECS'
