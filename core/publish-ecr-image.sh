@@ -1,3 +1,5 @@
+#!/bin/sh
+
 TAG=$BUILD_NAME:$TAG_NAME
 
 docker tag $TAG $AWS_REPOSITORY/$TAG

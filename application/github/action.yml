@@ -2,7 +2,7 @@ name: publish-ecr-action
 
 author: Heronlabs
 
-description: Publish ECR Image
+description: Publish ECR
 
 inputs:
   AWS_REPOSITORY:
@@ -45,8 +45,8 @@ runs:
     - name: '[PUBLISH] | Publish image on ECR'
       shell: bash
       run: |
-         chmod +x ./publish-ecr-action/core/publish-ecr-image.sh
-         ./publish-ecr-action/core/publish-ecr-image.sh
+        chmod +x ./publish-ecr-action/core/publish-ecr-image.sh
+        ./publish-ecr-action/core/publish-ecr-image.sh
       env:
         AWS_REPOSITORY: ${{ inputs.AWS_REPOSITORY }}
         BUILD_NAME: ${{ inputs.BUILD_NAME }}
