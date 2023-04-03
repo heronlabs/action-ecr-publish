@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 TAG=$BUILD_NAME:$TAG_NAME
 
