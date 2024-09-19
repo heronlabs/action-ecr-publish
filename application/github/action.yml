@@ -23,15 +23,12 @@ inputs:
   TAG_NAME:
     description: inputs.TAG_NAME
     required: true
-  PAT:
-    description: inputs.PAT
-    required: false
 
 runs:
   using: composite
   steps:
     - name: '[BUILD] | Build'
-      run: docker build --build-arg PAT=${{ inputs.PAT }} --tag ${{ inputs.BUILD_NAME }}:${{ inputs.TAG_NAME }} . -f ${{ inputs.FILE_NAME }}
+      run: docker build --tag ${{ inputs.BUILD_NAME }}:${{ inputs.TAG_NAME }} . -f ${{ inputs.FILE_NAME }}
       shell: bash
 
     - name: '[TEST] | Lint Check'
