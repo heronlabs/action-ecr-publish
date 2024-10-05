@@ -51,4 +51,3 @@ runs:
         AWS_REPOSITORY: ${{ inputs.AWS_REPOSITORY }}
         BUILD_NAME: ${{ inputs.BUILD_NAME }}
         TAG_NAME: ${{ inputs.TAG_NAME }}
-
