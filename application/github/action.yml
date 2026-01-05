@@ -1,6 +1,6 @@
 name: publish-ecr-action
 
-author: Heronlabs
+author: Heron Labs
 
 description: Publish ECR
 
