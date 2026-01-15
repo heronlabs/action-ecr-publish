@@ -26,6 +26,9 @@ inputs:
   TAG_NAME:
     description: inputs.TAG_NAME
     required: true
+  NODE_AUTH_TOKEN:
+    description: inputs.NODE_AUTH_TOKEN
+    required: false
 
 runs:
   using: composite
@@ -33,6 +36,8 @@ runs:
     - name: '[BUILD] | Build'
       run: docker build --tag ${{ inputs.BUILD_NAME }}:${{ inputs.TAG_NAME }} . -f ${{ inputs.FILE_NAME }}
       shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
     - name: '[TEST] | Lint Check'
       run: docker run --rm --interactive hadolint/hadolint < ${{ inputs.FILE_NAME }}
