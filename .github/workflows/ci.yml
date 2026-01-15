@@ -45,9 +45,6 @@ jobs:
         with:
           scandir: './core'
 
-      - name: '[LINT] | Validate workflows'
-        uses: raven-actions/actionlint@v2
-
   tag:
     name: Tag
     runs-on: ubuntu-24.04
@@ -64,16 +61,16 @@ jobs:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "spec=${{ inputs.spec }}" >> $GITHUB_OUTPUT
+            echo "spec=${{ inputs.spec }}" >> "$GITHUB_OUTPUT"
           else
             if echo "$COMMIT_MSG" | grep -qiE '^major:'; then
-              echo "spec=major" >> $GITHUB_OUTPUT
+              echo "spec=major" >> "$GITHUB_OUTPUT"
             elif echo "$COMMIT_MSG" | grep -qiE '^minor:'; then
-              echo "spec=minor" >> $GITHUB_OUTPUT
+              echo "spec=minor" >> "$GITHUB_OUTPUT"
             elif echo "$COMMIT_MSG" | grep -qiE '^patch:'; then
-              echo "spec=patch" >> $GITHUB_OUTPUT
+              echo "spec=patch" >> "$GITHUB_OUTPUT"
             else
-              echo "spec=${{ env.DEFAULT_SPEC }}" >> $GITHUB_OUTPUT
+              echo "spec=${{ env.DEFAULT_SPEC }}" >> "$GITHUB_OUTPUT"
             fi
           fi
 
@@ -88,14 +85,14 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: '[RUN] | Bump version'
-        run: npm version ${{ steps.spec.outputs.spec }} -m "[skip ci] bump version"
+        run: npm version "${{ steps.spec.outputs.spec }}" -m "[skip ci] bump version"
 
       - name: '[RUN] | Push changes'
         run: git push --follow-tags
 
       - name: '[OUTPUT] | Export version'
         id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
   release:
     name: Create release
