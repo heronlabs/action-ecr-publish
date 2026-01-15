@@ -41,7 +41,7 @@ runs:
       run: |
         SECRET_ARG=""
         if [ -n "$NODE_AUTH_TOKEN" ]; then
-          SECRET_ARG="--secret id=npm_token,env=NODE_AUTH_TOKEN"
+          SECRET_ARG="--secret id=NODE_AUTH_TOKEN,env=NODE_AUTH_TOKEN"
         fi
         docker build \
           $SECRET_ARG \
