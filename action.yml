@@ -39,13 +39,16 @@ runs:
 
     - name: '[BUILD] | Build'
       run: |
+        SECRET_ARG=""
+        if [ -n "$NODE_AUTH_TOKEN" ]; then
+          SECRET_ARG="--secret id=npm_token,env=NODE_AUTH_TOKEN"
+        fi
         docker build \
-          --secret id=npm_token,env=NODE_AUTH_TOKEN \
+          $SECRET_ARG \
           --tag "${{ inputs.BUILD_NAME }}:${{ inputs.TAG_NAME }}" \
           -f "${{ inputs.FILE_NAME }}" .
       shell: bash
       env:
-        DOCKER_BUILDKIT: '1'
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
     - name: '[PUBLISH] | Configure AWS Credentials'
