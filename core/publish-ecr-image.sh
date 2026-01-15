@@ -1,7 +1,8 @@
 #!/bin/bash
+set -euo pipefail
 
-TAG=$BUILD_NAME:$TAG_NAME
+TAG="${BUILD_NAME}:${TAG_NAME}"
 
-docker tag $TAG $AWS_REPOSITORY/$TAG
+docker tag "${TAG}" "${AWS_REPOSITORY}/${TAG}"
 
-docker push $AWS_REPOSITORY/$TAG
+docker push "${AWS_REPOSITORY}/${TAG}"

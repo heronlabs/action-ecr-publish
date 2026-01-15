@@ -1,0 +1,118 @@
+# ============================================================================
+# CI & TAG WORKFLOW
+# Validates action files on all pushes, then bumps version on main branch only.
+#
+# Triggers:
+#   1. Push to any branch: Runs CI (lint shell scripts & validate action.yml)
+#   2. Push to main: Runs CI, then bumps version based on commit prefix
+#   3. Manual (workflow_dispatch): Select major/minor/patch from dropdown
+#
+# Commit Message Prefixes (for version bump on main):
+#   "major: breaking API changes"   → major (1.0.0 → 2.0.0)
+#   "minor: add new feature"        → minor (1.0.0 → 1.1.0)
+#   "patch: fix bug"                → patch (1.0.0 → 1.0.1)
+#   "update readme"                 → patch (default)
+# ============================================================================
+name: '[ CI ] | Validate & Tag'
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      spec:
+        description: The SEMVER specification.
+        required: true
+        type: choice
+        default: patch
+        options:
+          - 'major'
+          - 'minor'
+          - 'patch'
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    name: Validate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: '[SETUP] | Clone Repository'
+        uses: actions/checkout@v6
+
+      - name: '[LINT] | Shellcheck'
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './core'
+
+      - name: '[LINT] | Validate action.yml'
+        uses: raven-actions/actionlint@v2
+        with:
+          files: 'application/github/action.yml'
+
+  tag:
+    name: Tag
+    runs-on: ubuntu-24.04
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    env:
+      DEFAULT_SPEC: patch
+    steps:
+      - name: '[SETUP] | Set spec variable'
+        id: spec
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "spec=${{ inputs.spec }}" >> $GITHUB_OUTPUT
+          else
+            if echo "$COMMIT_MSG" | grep -qiE '^major:'; then
+              echo "spec=major" >> $GITHUB_OUTPUT
+            elif echo "$COMMIT_MSG" | grep -qiE '^minor:'; then
+              echo "spec=minor" >> $GITHUB_OUTPUT
+            elif echo "$COMMIT_MSG" | grep -qiE '^patch:'; then
+              echo "spec=patch" >> $GITHUB_OUTPUT
+            else
+              echo "spec=${{ env.DEFAULT_SPEC }}" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: '[SETUP] | Checkout repository'
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: '[SETUP] | Config GIT'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: '[RUN] | Bump version'
+        run: npm version ${{ steps.spec.outputs.spec }} -m "[skip ci] bump version"
+
+      - name: '[RUN] | Push changes'
+        run: git push --follow-tags
+
+      - name: '[OUTPUT] | Export version'
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+  release:
+    name: Create release
+    needs: tag
+    runs-on: ubuntu-24.04
+    steps:
+      - name: '[SETUP] | Checkout repository'
+        uses: actions/checkout@v6
+        with:
+          ref: v${{ needs.tag.outputs.version }}
+
+      - name: '[RUN] | Create GitHub Release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ needs.tag.outputs.version }}" \
+            --title "v${{ needs.tag.outputs.version }}" \
+            --generate-notes
