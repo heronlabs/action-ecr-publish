@@ -33,11 +33,11 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: '[TEST] | Lint Check'
+    - name: 'Lint Check'
       run: docker run --rm --interactive hadolint/hadolint < ${{ inputs.FILE_NAME }}
       shell: bash
 
-    - name: '[BUILD] | Build'
+    - name: 'Build'
       run: |
         SECRET_ARG=""
         if [ -n "$NODE_AUTH_TOKEN" ]; then
@@ -51,18 +51,16 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
-    - name: '[PUBLISH] | Configure AWS Credentials'
-      uses: aws-actions/configure-aws-credentials@v5
+    - uses: aws-actions/configure-aws-credentials@v5
       with:
         aws-region: ${{ inputs.AWS_REGION }}
         role-to-assume: ${{ inputs.AWS_ROLE_TO_ASSUME }}
         role-duration-seconds: ${{ inputs.AWS_ROLE_DURATION_SECONDS }}
         role-session-name: publish-ecr-action-session
 
-    - name: '[PUBLISH] | Login on ECR'
-      uses: aws-actions/amazon-ecr-login@v2
+    - uses: aws-actions/amazon-ecr-login@v2
 
-    - name: '[PUBLISH] | Publish image on ECR'
+    - name: 'Publish image on ECR'
       shell: bash
       run: bash ${{ github.action_path }}/core/publish-ecr-image.sh
       env:
