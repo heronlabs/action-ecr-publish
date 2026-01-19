@@ -1,4 +1,6 @@
-# publish-ecr-action
+# Publish ECR Action
+
+[![CI](https://github.com/heronlabs/publish-ecr-action/actions/workflows/ci.yml/badge.svg)](https://github.com/heronlabs/publish-ecr-action/actions/workflows/ci.yml)
 
 A GitHub Action that builds, lints, and publishes Docker images to Amazon Elastic Container Registry (ECR).
 
