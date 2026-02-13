@@ -7,16 +7,16 @@ description: Publish ECR
 inputs:
   AWS_ROLE_TO_ASSUME:
     description: inputs.AWS_ROLE_TO_ASSUME
-    required: true
+    required: false
   AWS_REGION:
     description: inputs.AWS_REGION
-    required: true
+    required: false
   AWS_ROLE_DURATION_SECONDS:
     description: inputs.AWS_ROLE_DURATION_SECONDS
-    required: true
+    required: false
   AWS_REPOSITORY:
     description: inputs.AWS_REPOSITORY
-    required: true
+    required: false
   BUILD_NAME:
     description: inputs.BUILD_NAME
     required: true
@@ -52,6 +52,7 @@ runs:
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
     - uses: aws-actions/configure-aws-credentials@v5
+      if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       with:
         aws-region: ${{ inputs.AWS_REGION }}
         role-to-assume: ${{ inputs.AWS_ROLE_TO_ASSUME }}
@@ -59,8 +60,10 @@ runs:
         role-session-name: publish-ecr-action-session
 
     - uses: aws-actions/amazon-ecr-login@v2
+      if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
 
     - name: 'Publish image on ECR'
+      if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       shell: bash
       run: bash ${{ github.action_path }}/core/publish-ecr-image.sh
       env:
