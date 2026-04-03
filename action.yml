@@ -26,6 +26,9 @@ inputs:
   TAG_NAME:
     description: inputs.TAG_NAME
     required: true
+  TAG_ALIAS:
+    description: 'Comma-separated alias tags to apply to the same image (e.g. "v1,v1.2")'
+    required: false
   NODE_AUTH_TOKEN:
     description: inputs.NODE_AUTH_TOKEN
     required: false
@@ -71,3 +74,4 @@ runs:
         AWS_REPOSITORY: ${{ inputs.AWS_REPOSITORY }}
         BUILD_NAME: ${{ inputs.BUILD_NAME }}
         TAG_NAME: ${{ inputs.TAG_NAME }}
+        TAG_ALIAS: ${{ inputs.TAG_ALIAS }}
