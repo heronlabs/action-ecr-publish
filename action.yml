@@ -52,7 +52,7 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
-    - uses: aws-actions/configure-aws-credentials@v5
+    - uses: aws-actions/configure-aws-credentials@v6
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       with:
         aws-region: ${{ inputs.AWS_REGION }}
