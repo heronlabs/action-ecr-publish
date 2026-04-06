@@ -104,6 +104,7 @@ Internal action dependencies:
 | `BUILD_NAME` | Name for the Docker image | Yes | — |
 | `FILE_NAME` | Path to the Dockerfile | Yes | — |
 | `TAG_NAME` | Tag for the Docker image | Yes | — |
+| `TAG_ALIAS` | Comma-separated alias tags to apply to the same image (e.g. `v1,v1.2`) | No | — |
 | `NODE_AUTH_TOKEN` | GitHub token for private npm packages (passed as Docker secret) | No | — |
 
 ## Outputs
