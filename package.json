@@ -1,11 +1,11 @@
 {
-  "name": "publish-ecr-action",
+  "name": "action-ecr-publish",
   "version": "1.2.10",
   "description": "GitHub Action to build and publish Docker images to AWS ECR",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/heronlabs/publish-ecr-action.git"
+    "url": "git+https://github.com/heronlabs/action-ecr-publish.git"
   },
   "author": "Heron Labs",
   "license": "MIT",

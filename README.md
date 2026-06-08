@@ -1,6 +1,6 @@
 # Publish ECR Action
 
-[![CI](https://github.com/heronlabs/publish-ecr-action/actions/workflows/ci.yml/badge.svg)](https://github.com/heronlabs/publish-ecr-action/actions/workflows/ci.yml)
+[![CI](https://github.com/heronlabs/action-ecr-publish/actions/workflows/ci.yml/badge.svg)](https://github.com/heronlabs/action-ecr-publish/actions/workflows/ci.yml)
 
 A GitHub Action that builds, lints, and publishes Docker images to Amazon Elastic Container Registry (ECR).
 
@@ -134,7 +134,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build and Push to ECR
-        uses: heronlabs/publish-ecr-action@v1
+        uses: heronlabs/action-ecr-publish@v1
         with:
           AWS_ROLE_TO_ASSUME: arn:aws:iam::123456789012:role/github-ecr-push
           AWS_REGION: us-east-1
@@ -170,7 +170,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build and Push to ECR
-        uses: heronlabs/publish-ecr-action@v1
+        uses: heronlabs/action-ecr-publish@v1
         with:
           AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_ARN }}
           AWS_REGION: ${{ vars.AWS_REGION }}
@@ -223,7 +223,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build and Push to ECR
-        uses: heronlabs/publish-ecr-action@v1
+        uses: heronlabs/action-ecr-publish@v1
         with:
           AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_ARN }}
           AWS_REGION: us-east-1
@@ -239,7 +239,7 @@ jobs:
 - **Dockerfile linting**: The action runs [hadolint](https://github.com/hadolint/hadolint) before building. The workflow fails if linting errors are found.
 - **BuildKit required**: When using `NODE_AUTH_TOKEN`, your Dockerfile must use BuildKit syntax (`# syntax=docker/dockerfile:1`) and `--mount=type=secret`.
 - **OIDC only**: This action uses OIDC for AWS authentication. Long-lived access keys are not supported.
-- **Role session name**: The session is named `publish-ecr-action-session` for CloudTrail auditing.
+- **Role session name**: The session is named `action-ecr-publish-session` for CloudTrail auditing.
 - **Build context**: The Docker build context is the repository root (`.`).
 
 ## Common Errors
