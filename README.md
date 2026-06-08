@@ -89,7 +89,7 @@ The action uses these tools (pre-installed on GitHub-hosted runners):
 
 Internal action dependencies:
 
-- `aws-actions/configure-aws-credentials@v5`
+- `aws-actions/configure-aws-credentials@v6`
 - `aws-actions/amazon-ecr-login@v2`
 - `hadolint/hadolint` (Docker image for Dockerfile linting)
 
@@ -97,15 +97,17 @@ Internal action dependencies:
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `AWS_ROLE_TO_ASSUME` | ARN of the IAM role to assume for ECR access | Yes | — |
-| `AWS_REGION` | AWS region where your ECR repository is located | Yes | — |
-| `AWS_ROLE_DURATION_SECONDS` | Duration in seconds for the assumed role session | Yes | — |
-| `AWS_REPOSITORY` | ECR repository URL (without image name) | Yes | — |
 | `BUILD_NAME` | Name for the Docker image | Yes | — |
 | `FILE_NAME` | Path to the Dockerfile | Yes | — |
 | `TAG_NAME` | Tag for the Docker image | Yes | — |
+| `AWS_ROLE_TO_ASSUME` | ARN of the IAM role to assume for ECR access | No\* | — |
+| `AWS_REGION` | AWS region where your ECR repository is located | No\* | — |
+| `AWS_ROLE_DURATION_SECONDS` | Duration in seconds for the assumed role session | No\* | — |
+| `AWS_REPOSITORY` | ECR repository URL (without image name) | No\* | — |
 | `TAG_ALIAS` | Comma-separated alias tags to apply to the same image (e.g. `v1,v1.2`) | No | — |
 | `NODE_AUTH_TOKEN` | GitHub token for private npm packages (passed as Docker secret) | No | — |
+
+\* The image is **always** linted and built. The `AWS_*` inputs are only consumed when `AWS_ROLE_TO_ASSUME` is set: provide them to push to ECR, or omit them to lint + build only (e.g. on pull requests).
 
 ## Outputs
 
