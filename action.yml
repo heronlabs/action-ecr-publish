@@ -55,7 +55,7 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
-    - uses: aws-actions/configure-aws-credentials@v6
+    - uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       with:
         aws-region: ${{ inputs.AWS_REGION }}
@@ -63,7 +63,7 @@ runs:
         role-duration-seconds: ${{ inputs.AWS_ROLE_DURATION_SECONDS }}
         role-session-name: action-ecr-publish-session
 
-    - uses: aws-actions/amazon-ecr-login@v2
+    - uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
 
     - name: 'Publish image on ECR'
