@@ -2,7 +2,8 @@
   "stack": "pnpm",
   "verify": {
     "install": "pnpm install --frozen-lockfile",
-    "lint": "shellcheck core/*.sh"
+    "lint": "shellcheck core/*.sh test/run.sh test/docker",
+    "test": "bash test/run.sh"
   },
   "worktree": { "dir": ".worktrees", "base": "main" },
   "pr": { "base": "main", "remote": "origin" },
