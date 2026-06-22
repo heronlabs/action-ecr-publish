@@ -1,6 +1,6 @@
 {
   "name": "action-ecr-publish",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "GitHub Action to build and publish Docker images to AWS ECR",
   "private": true,
   "repository": {
