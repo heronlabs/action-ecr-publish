@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Minimal `docker` stub for action-ecr-publish offline tests.
+#
+# Emulates only the docker surface the action uses:
+#   docker tag  SRC DST  -> no-op (exit 0)
+#   docker push REF      -> no-op (exit 0)
+#
+# Every invocation is appended (one line, full argv) to $DOCKER_LOG so tests can assert
+# which tags/pushes ran and in what order. No real images, no registry, no network.
+set -euo pipefail
+
+: "${DOCKER_LOG:?DOCKER_LOG must point at a log file}"
+printf 'docker %s\n' "$*" >>"$DOCKER_LOG"
+
+case "${1:-}" in
+  tag)  : ;;
+  push) : ;;
+  *) printf 'docker stub: unhandled argv: %s\n' "$*" >&2; exit 1 ;;
+esac
