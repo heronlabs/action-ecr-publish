@@ -7,5 +7,5 @@
   },
   "worktree": { "dir": ".worktrees", "base": "main" },
   "pr": { "base": "main", "remote": "origin" },
-  "audits": { "security": true, "freshness": { "level": "off" } }
+  "audits": { "security": true }
 }
