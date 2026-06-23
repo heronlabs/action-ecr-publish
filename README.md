@@ -1,6 +1,6 @@
 # ECR Publish Action
 
-[![CI](https://github.com/heronlabs/action-ecr-publish/actions/workflows/ci.yml/badge.svg)](https://github.com/heronlabs/action-ecr-publish/actions/workflows/ci.yml)
+[![CI](https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml)
 
 > Lint, build, and publish a Docker image to Amazon ECR.
 
