@@ -9,7 +9,7 @@
 setup() {
   DOCKER_LOG="$(mktemp)"
   export DOCKER_LOG
-  PATH="${BATS_TEST_DIRNAME}:$PATH"
+  PATH="${BATS_TEST_DIRNAME}/__mocks__:$PATH"
 }
 
 teardown() {
@@ -19,7 +19,7 @@ teardown() {
 # Helper: run publish-ecr-image.sh with the given env vars.
 run_script() {
   : >"$DOCKER_LOG"
-  run env DOCKER_LOG="$DOCKER_LOG" PATH="${BATS_TEST_DIRNAME}:$PATH" "$@" bash "${BATS_TEST_DIRNAME}/../core/publish-ecr-image.sh"
+  run env DOCKER_LOG="$DOCKER_LOG" PATH="${BATS_TEST_DIRNAME}/__mocks__:$PATH" "$@" bash "${BATS_TEST_DIRNAME}/../core/publish-ecr-image.sh"
 }
 
 @test "base: single push" {

@@ -1,12 +1,24 @@
-# ECR Publish Action
+# 🐳 action-ecr-publish — Lint, build, publish to ECR.
 
 [![CI](https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml)
 
-> Lint, build, and publish a Docker image to Amazon ECR.
+> Validate the Dockerfile with hadolint, build the image, then (when an IAM role is supplied) authenticate to AWS via OIDC and push to your ECR repository. Omit the `AWS_*` inputs to lint and build only.
 
-Validates the Dockerfile with hadolint, builds the image, then (when an IAM role is supplied) authenticates to AWS via OIDC and pushes to your ECR repository. Omit the `AWS_*` inputs to lint and build only.
+## Contents
+
+- [Usage](#usage)
+  - [Minimal](#minimal)
+  - [With private npm packages](#with-private-npm-packages)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Permissions](#permissions)
+- [How it works](#how-it-works)
+- [Notes](#notes)
+- [License](#license)
 
 ## Usage
+
+Drive from a push-to-main or release workflow.
 
 ```yaml
 name: Publish to ECR
@@ -23,7 +35,7 @@ jobs:
   publish:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: heronlabs/action-ecr-publish@v3
         with:
@@ -36,21 +48,33 @@ jobs:
           TAG_NAME: ${{ github.sha }}
 ```
 
-### Private npm packages
+### Minimal
+
+Omit the `AWS_*` inputs to lint and build without pushing — useful in PR CI.
+
+```yaml
+- uses: heronlabs/action-ecr-publish@v3
+  with:
+    BUILD_NAME: my-app
+    FILE_NAME: Dockerfile
+    TAG_NAME: ${{ github.sha }}
+```
+
+### With private npm packages
 
 Pass `NODE_AUTH_TOKEN` when the build installs private npm packages. The Dockerfile reads it as a BuildKit secret.
 
 ```yaml
-      - uses: heronlabs/action-ecr-publish@v3
-        with:
-          AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_ARN }}
-          AWS_REGION: ${{ vars.AWS_REGION }}
-          AWS_ROLE_DURATION_SECONDS: 1800
-          AWS_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          BUILD_NAME: my-app
-          FILE_NAME: docker/Dockerfile.prod
-          TAG_NAME: ${{ github.ref_name }}-${{ github.sha }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+- uses: heronlabs/action-ecr-publish@v3
+  with:
+    AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_ARN }}
+    AWS_REGION: ${{ vars.AWS_REGION }}
+    AWS_ROLE_DURATION_SECONDS: 1800
+    AWS_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    BUILD_NAME: my-app
+    FILE_NAME: docker/Dockerfile.prod
+    TAG_NAME: ${{ github.ref_name }}-${{ github.sha }}
+    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
 ```dockerfile
@@ -151,9 +175,17 @@ Least-privilege permission policy — allow pushing images to ECR:
 
 </details>
 
+## How it works
+
+Composite action with four steps:
+
+1. **Lint** — `hadolint` validates the Dockerfile. Lint failures block the run.
+2. **Build** — `docker build` with `--provenance=false`. When `NODE_AUTH_TOKEN` is set, it is mounted as a BuildKit secret (`--secret id=NODE_AUTH_TOKEN`).
+3. **Auth** — `aws-actions/configure-aws-credentials` assumes the IAM role via OIDC (skipped when `AWS_ROLE_TO_ASSUME` is unset).
+4. **Publish** — `core/publish-ecr-image.sh` tags the image and pushes it (and any alias tags) to ECR. Skipped when `AWS_ROLE_TO_ASSUME` is unset.
+
 ## Notes
 
-- hadolint runs before the build; lint failures block the run.
 - BuildKit is required for `NODE_AUTH_TOKEN`: the Dockerfile needs `# syntax=docker/dockerfile:1` and `--mount=type=secret`.
 - The Docker build context is always the repository root (`.`).
 - OIDC only — no long-lived access keys.
