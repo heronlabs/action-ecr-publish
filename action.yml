@@ -36,11 +36,11 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: 'Lint Check'
+    - name: 'Lint Dockerfile'
       run: docker run --rm --interactive hadolint/hadolint < ${{ inputs.FILE_NAME }}
       shell: bash
 
-    - name: 'Build'
+    - name: 'Build Docker image'
       run: |
         SECRET_ARG=""
         if [ -n "$NODE_AUTH_TOKEN" ]; then
@@ -55,7 +55,8 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
-    - uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
+    - name: 'Configure AWS Credentials'
+      uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       with:
         aws-region: ${{ inputs.AWS_REGION }}
@@ -63,10 +64,11 @@ runs:
         role-duration-seconds: ${{ inputs.AWS_ROLE_DURATION_SECONDS }}
         role-session-name: action-ecr-publish-session
 
-    - uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+    - name: 'Log in to Amazon ECR'
+      uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
 
-    - name: 'Publish image on ECR'
+    - name: 'Publish to ECR'
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       shell: bash
       run: bash ${{ github.action_path }}/core/publish.sh
