@@ -5,7 +5,7 @@ author: Heron Labs
 description: Build a Docker image, lint it with Hadolint, and publish it to Amazon ECR with optional tag aliasing.
 
 branding:
-  icon: container
+  icon: package
   color: blue
 
 inputs:
