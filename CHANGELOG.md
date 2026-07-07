@@ -1,3 +1,9 @@
+## v5.0.2 (2026-07-07)
+
+### Miscellaneous Chores
+
+* other: Fix branding icon: container → package (f8cb530197a88209933fad3175b81c1c2aa20eff)
+
 ## v5.0.1 (2026-07-07)
 
 ### Miscellaneous Chores
