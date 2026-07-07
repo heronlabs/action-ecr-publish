@@ -2,45 +2,45 @@ name: action-ecr-publish
 
 author: Heron Labs
 
-description: Publish ECR
+description: Build a Docker image, lint it with Hadolint, and publish it to Amazon ECR with optional tag aliasing.
 
 inputs:
   AWS_ROLE_TO_ASSUME:
-    description: inputs.AWS_ROLE_TO_ASSUME
+    description: "ARN of the IAM role to assume via OIDC."
     required: false
   AWS_REGION:
-    description: inputs.AWS_REGION
+    description: "AWS region where the ECR repository lives."
     required: false
   AWS_ROLE_DURATION_SECONDS:
-    description: inputs.AWS_ROLE_DURATION_SECONDS
+    description: "Duration in seconds for the assumed role session."
     required: false
   AWS_REPOSITORY:
-    description: inputs.AWS_REPOSITORY
+    description: "Full ECR repository URL (e.g., 123456789.dkr.ecr.us-east-1.amazonaws.com/my-repo)."
     required: false
   BUILD_NAME:
-    description: inputs.BUILD_NAME
+    description: "Docker image name for the build."
     required: true
   FILE_NAME:
-    description: inputs.FILE_NAME
+    description: "Path to the Dockerfile (e.g., ./Dockerfile)."
     required: true
   TAG_NAME:
-    description: inputs.TAG_NAME
+    description: "Primary tag for the built image (e.g., sha-abc123 or v1.2.3)."
     required: true
   TAG_ALIAS:
-    description: 'Comma-separated alias tags to apply to the same image (e.g. "v1,v1.2")'
+    description: "Comma-separated alias tags to apply to the same image (e.g., v1,v1.2)."
     required: false
   NODE_AUTH_TOKEN:
-    description: inputs.NODE_AUTH_TOKEN
+    description: "Optional npm registry token for private package installs during Docker build."
     required: false
 
 runs:
   using: composite
   steps:
-    - name: 'Lint Check'
+    - name: 'Lint Dockerfile'
       run: docker run --rm --interactive hadolint/hadolint < ${{ inputs.FILE_NAME }}
       shell: bash
 
-    - name: 'Build'
+    - name: 'Build Docker image'
       run: |
         SECRET_ARG=""
         if [ -n "$NODE_AUTH_TOKEN" ]; then
@@ -55,7 +55,8 @@ runs:
       env:
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
 
-    - uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
+    - name: 'Configure AWS Credentials'
+      uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       with:
         aws-region: ${{ inputs.AWS_REGION }}
@@ -63,13 +64,14 @@ runs:
         role-duration-seconds: ${{ inputs.AWS_ROLE_DURATION_SECONDS }}
         role-session-name: action-ecr-publish-session
 
-    - uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+    - name: 'Log in to Amazon ECR'
+      uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
 
-    - name: 'Publish image on ECR'
+    - name: 'Publish to ECR'
       if: ${{ inputs.AWS_ROLE_TO_ASSUME }}
       shell: bash
-      run: bash ${{ github.action_path }}/core/publish-ecr-image.sh
+      run: bash ${{ github.action_path }}/core/publish.sh
       env:
         AWS_REPOSITORY: ${{ inputs.AWS_REPOSITORY }}
         BUILD_NAME: ${{ inputs.BUILD_NAME }}

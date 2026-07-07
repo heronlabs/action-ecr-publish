@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# Offline test harness for core/publish-ecr-image.sh.
+# Offline test harness for core/publish.sh.
 #
 # Points the `docker` stub (sibling file) at PATH, runs the action script with
 # the env vars that action.yml wires in, and asserts on the tag/push calls
@@ -19,7 +19,7 @@ teardown() {
 # Helper: run publish-ecr-image.sh with the given env vars.
 run_script() {
   : >"$DOCKER_LOG"
-  run env DOCKER_LOG="$DOCKER_LOG" PATH="${BATS_TEST_DIRNAME}/__mocks__:$PATH" "$@" bash "${BATS_TEST_DIRNAME}/../core/publish-ecr-image.sh"
+  run env DOCKER_LOG="$DOCKER_LOG" PATH="${BATS_TEST_DIRNAME}/__mocks__:$PATH" "$@" bash "${BATS_TEST_DIRNAME}/../core/publish.sh"
 }
 
 @test "base: single push" {
