@@ -1,3 +1,9 @@
+## v5.0.1 (2026-07-07)
+
+### Miscellaneous Chores
+
+* other: Add branding icon and color to action.yml (5a287d9db0d97e946e3f25bb84d1689798f499e7)
+
 ## v5.0.0 (2026-07-07)
 
 
