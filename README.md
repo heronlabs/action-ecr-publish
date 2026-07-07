@@ -12,6 +12,7 @@
 - [Inputs](#inputs)
 - [Outputs](#outputs)
 - [Permissions](#permissions)
+- [Architecture](#architecture)
 - [How it works](#how-it-works)
 - [Notes](#notes)
 - [License](#license)
@@ -174,6 +175,16 @@ Least-privilege permission policy — allow pushing images to ECR:
 ```
 
 </details>
+
+## Architecture
+
+```mermaid
+graph TD
+    A[action.yml] --> B[core/publish-ecr-image.sh]
+    B --> C[tests/action.bats]
+    C --> D[Makefile]
+    D --> E[version.txt]
+```
 
 ## How it works
 
