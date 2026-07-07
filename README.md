@@ -1,8 +1,10 @@
-# 🐳 action-ecr-publish — Lint, build, publish to ECR.
+# 🐳 action-ecr-publish — Build, lint, push to ECR
 
-[![CI](https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml)
+[![CI][ci-badge]][ci-url]
+[![License: MIT][license-badge]][license-url]
+[![GitHub Marketplace][marketplace-badge]][marketplace-url]
 
-> Validate the Dockerfile with hadolint, build the image, then (when an IAM role is supplied) authenticate to AWS via OIDC and push to your ECR repository. Omit the `AWS_*` inputs to lint and build only.
+> **GitHub Action** to validate the Dockerfile with hadolint, build the image, then (when an IAM role is supplied) authenticate to AWS via OIDC and push to your ECR repository. Omit the `AWS_*` inputs to lint and build only.
 
 ## Contents
 
@@ -212,3 +214,10 @@ Composite action with four steps:
 ## License
 
 MIT
+
+[ci-badge]: https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml/badge.svg
+[ci-url]: https://github.com/heronlabs/action-ecr-publish/actions/workflows/continuous-integration.yml
+[license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
+[license-url]: ./LICENSE
+[marketplace-badge]: https://img.shields.io/badge/GitHub-Marketplace-green.svg
+[marketplace-url]: https://github.com/marketplace/actions/action-ecr-publish
