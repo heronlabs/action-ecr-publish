@@ -178,12 +178,18 @@ Least-privilege permission policy — allow pushing images to ECR:
 
 ## Architecture
 
-```mermaid
-graph TD
-    A[action.yml] --> B[core/publish-ecr-image.sh]
-    B --> C[tests/action.bats]
-    C --> D[Makefile]
-    D --> E[version.txt]
+Bash shell script wrapped by a composite GitHub Action.
+
+```
+├── action.yml                    # Composite action definition
+├── core/
+│   └── publish.sh                # CLI entry point — ECR image push
+├── tests/
+│   ├── __mocks__/
+│   │   └── docker                # Docker CLI stub (records invocations)
+│   └── action.bats               # BATS tests
+├── Makefile                      # test (bats) + lint (shellcheck)
+└── version.txt                   # Current version
 ```
 
 ## How it works
@@ -193,7 +199,7 @@ Composite action with four steps:
 1. **Lint** — `hadolint` validates the Dockerfile. Lint failures block the run.
 2. **Build** — `docker build` with `--provenance=false`. When `NODE_AUTH_TOKEN` is set, it is mounted as a BuildKit secret (`--secret id=NODE_AUTH_TOKEN`).
 3. **Auth** — `aws-actions/configure-aws-credentials` assumes the IAM role via OIDC (skipped when `AWS_ROLE_TO_ASSUME` is unset).
-4. **Publish** — `core/publish-ecr-image.sh` tags the image and pushes it (and any alias tags) to ECR. Skipped when `AWS_ROLE_TO_ASSUME` is unset.
+4. **Publish** — `core/publish.sh` tags the image and pushes it (and any alias tags) to ECR. Skipped when `AWS_ROLE_TO_ASSUME` is unset.
 
 ## Notes
 
