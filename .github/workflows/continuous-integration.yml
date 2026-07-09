@@ -31,5 +31,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: 'Run offline harness'
+      - name: 'Run bats tests'
+        shell: bash
         run: make test
